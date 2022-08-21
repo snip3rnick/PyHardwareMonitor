@@ -1,0 +1,6 @@
+[submodule "submodules/LibreHardwareMonitor"]
+	path = submodules/LibreHardwareMonitor
+	url = https://github.com/LibreHardwareMonitor/LibreHardwareMonitor.git
+[submodule "submodules/pythonstubs"]
+	path = submodules/pythonstubs
+	url = https://github.com/mcneel/pythonstubs.git
