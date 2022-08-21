@@ -15,5 +15,6 @@
 *.vcxproj.user
 *.suo
 .vs/
+build/
 
 *.egg-info/
