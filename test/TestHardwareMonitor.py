@@ -1,30 +1,43 @@
-import sys, os
+# Test script enumerating all hardware components and listing available sensors
 
+import sys, os
 sys.path.insert(0, os.path.abspath(__file__ + "/../.."))
 
-from HardwareMonitor import Hardware
 
-def VisitHardware(hardware: Hardware.IHardware):
-    hardware.Update()
-    for subHardware in hardware.SubHardware:
-        subHardware.Update()
+from HardwareMonitor.Hardware import Computer, IVisitor, IComputer, IHardware, IParameter, ISensor
 
 
-c = Hardware.Computer()
-c.IsMotherboardEnabled = True
-c.IsControllerEnabled = True
-c.IsCpuEnabled = True
-c.IsGpuEnabled = True
-c.IsBatteryEnabled = True
-c.IsMemoryEnabled = True
-c.IsNetworkEnabled = True
-c.IsStorageEnabled = True
+class UpdateVisitor(IVisitor):
+    __namespace__ = "TestHardwareMonitor"
+    def VisitComputer(self, computer: IComputer):
+        computer.Traverse(self);
 
-c.Open()
+    def VisitHardware(self, hardware: IHardware):
+        hardware.Update()
+        for subHardware in hardware.SubHardware:
+            subHardware.Update()
 
-for hardware in c.Hardware:
-    print("-" * 80)
-    VisitHardware(hardware)
+    def VisitParameter(self, parameter: IParameter):
+        pass
+
+    def VisitSensor(self, sensor: ISensor):
+        pass
+
+
+computer = Computer()
+computer.IsMotherboardEnabled = True
+computer.IsControllerEnabled = True
+computer.IsCpuEnabled = True
+computer.IsGpuEnabled = True
+computer.IsBatteryEnabled = True
+computer.IsMemoryEnabled = True
+computer.IsNetworkEnabled = True
+computer.IsStorageEnabled = True
+
+computer.Open()
+computer.Accept(UpdateVisitor())
+
+for hardware in computer.Hardware:
     print(f"Hardware: {hardware.Name}")
     for subhardware  in hardware.SubHardware:
         print(f"\tSubhardware: {subhardware.Name}")
@@ -33,4 +46,4 @@ for hardware in c.Hardware:
     for sensor in hardware.Sensors:
         print(f"\tSensor: {sensor.Name}, value: {sensor.Value}")
 
-c.Close()
+computer.Close()
