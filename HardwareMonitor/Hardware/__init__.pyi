@@ -1,5 +1,5 @@
 __all__ = ['CPU','Gpu','Motherboard','Storage']
-from HardwareMonitor._util.types import AsyncCallback, Byte, DateTime, IAsyncResult, IDictionary, IReadOnlyList, IntPtr, Nullable, Object, Single, TimeSpan, Type, UInt16, UInt64, Version
+from HardwareMonitor._util.types import AsyncCallback, Byte, DateTime, IAsyncResult, IDictionary, IReadOnlyList, IntPtr, Nullable, Object, Single, TimeSpan, UInt16, UInt64
 from typing import overload, Tuple, Set, Iterable, List
 
 

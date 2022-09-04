@@ -1,4 +1,4 @@
-from HardwareMonitor._util.types import AsyncCallback, Byte, IAsyncResult, IntPtr, Object, Single, Type, UInt16
+from HardwareMonitor._util.types import AsyncCallback, Byte, IAsyncResult, IntPtr, Object, Single, UInt16
 from typing import overload, Tuple, Set, Iterable, List
 
 

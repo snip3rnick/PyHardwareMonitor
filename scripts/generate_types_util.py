@@ -14,6 +14,7 @@ NAMESPACES  = (
 EXCLUDE_SYMBOLS = set(["Tuple", "Set", "Iterable", "List"])
 
 
+# ------------------------------------------------------------------------------
 def getExported(namespace):
     split = namespace.split(".", 1)
     fromlist = ()
@@ -23,6 +24,7 @@ def getExported(namespace):
     return set([attr for attr in module.__all__ if not "`" in attr]) - EXCLUDE_SYMBOLS
 
 
+# ------------------------------------------------------------------------------
 def generateTypesStub():
     lines = ["# Generated stub file for some types from the CLR\n", "\n"]
     for namespace in NAMESPACES:

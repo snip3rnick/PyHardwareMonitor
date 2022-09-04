@@ -11,13 +11,68 @@ BASE_PATH      = Path(__file__).parent.absolute()
 MODULE_PATH    = BASE_PATH / ".." / "HardwareMonitor"
 NAMESPACE_INIT = BASE_PATH / "namespace.py"
 
+EXCLUDE_SYMBOLS= ("Type", "Version")
 
+
+# ------------------------------------------------------------------------------
+def findClosingParenthesis(data, symbols="()"):
+    sym_open, sym_close = symbols
+    lindex = rindex = lcount = rcount = 0
+    while rindex > -1:
+        rindex = data.find(sym_close, rindex) + 1
+        lcount += data.count(sym_open, lindex, rindex)
+        if lcount == rcount:
+            break
+        rcount += 1
+        lindex = rindex
+    return rindex - 1
+
+
+# ------------------------------------------------------------------------------
+def _replaceSetBracesRecursive(data, pattern: re.Pattern):
+    blocks = []
+    pos = 0
+    while 42:
+        match = pattern.search(data, pos)
+        if not match:
+            break
+        _, mend = match.regs[0]
+        blocks.append(data[pos:mend-1])
+        blocks.append("[")
+        remainder = data[mend:]
+        rpos = findClosingParenthesis(remainder)
+        blocks.extend(_replaceSetBracesRecursive(remainder[:rpos], pattern))
+        blocks.append("]")
+        pos = mend + rpos + 1
+    if pos < (len(data) - 1):
+        blocks.append(data[pos:])
+    return blocks
+
+
+# ------------------------------------------------------------------------------
+def repairSetAnnotation(stub_data):
+    regex   = re.compile(r"(\A|\W)Set\(")
+    return ''.join(_replaceSetBracesRecursive(stub_data, regex))
+
+
+# ------------------------------------------------------------------------------
+def repairArrayAnnotation(stub_data):
+    return re.sub(r"(\s)([^\s\[]+)\[\,\]", r"\1List[\2]", stub_data)
+
+
+# ------------------------------------------------------------------------------
+def repairTypingImport(stub_data):
+    return stub_data.replace("from typing import ", "from typing import overload, ")
+
+
+# ------------------------------------------------------------------------------
 def addSystemSymbolImport(stub_data):
     symbol_patterns = [(s, f"\\W{s}\\W") for s in SYSTEM_SYMBOLS]
     symbols_used = set()
     for symbol, pattern in symbol_patterns:
         if re.search(pattern, stub_data):
             symbols_used.add(symbol)
+    symbols_used = symbols_used.difference(EXCLUDE_SYMBOLS)
     if not symbols_used:
         return stub_data
     insert_index = stub_data.find("from typing import")
@@ -26,21 +81,25 @@ def addSystemSymbolImport(stub_data):
     return stub_data[:insert_index] + import_statement + stub_data[insert_index:]
 
 
+# ------------------------------------------------------------------------------
 def repairStub(stub_path: Path):
-    regex_replace = [
-        (r"(\s)Set\(([^\)]+)\)", r"\1Set[\2]"),
+    repair_steps = [
+        repairSetAnnotation,
+        repairArrayAnnotation,
+        repairTypingImport,
+        addSystemSymbolImport,
     ]
     with stub_path.open("r") as fobj:
         stub_data = fobj.read()
-    for pattern, repl in regex_replace:
-        stub_data = re.sub(pattern, repl, stub_data)
-    stub_data = stub_data.replace("from typing import ", "from typing import overload, ")
-    stub_data = addSystemSymbolImport(stub_data)
+    # Apply repair functions to the data
+    for func in repair_steps:
+        stub_data = func(stub_data)
     with stub_path.open("w") as fobj:
         fobj.write(stub_data)
     print("repaired", repr(str(stub_path.relative_to(BASE_PATH))))
 
 
+# ------------------------------------------------------------------------------
 def processNamespaceDir(namespace_dir: Path):
     has_subdirs = False
     init_py = namespace_dir / "__init__.py"
@@ -58,6 +117,7 @@ def processNamespaceDir(namespace_dir: Path):
         print("touched ", repr(str(init_py.relative_to(BASE_PATH))))
 
 
+# ------------------------------------------------------------------------------
 for path in MODULE_PATH.iterdir():
     if path.is_dir():
         processNamespaceDir(path)
