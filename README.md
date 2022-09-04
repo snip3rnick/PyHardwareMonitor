@@ -90,7 +90,7 @@ Instances from the `HardwareMonitor` module can be reduced to primitive python t
 Objects are recursively converted to Python builtin types (`dict`, `list`, ...) which is particularly useful if the data is to be serialized (e.g. with json).
 
 ```python
-computer = OpenComputer(motherboard=True)  # use with 'all=True' to enable every component
+computer = OpenComputer(cpu=True)  # use with 'all=True' to enable every component
 
 data = ToBuiltinTypes(computer.Hardware)
 # [{'Type': 'Hardware', 'HardwareType': 'Cpu', 'Name': 'Intel Core i5-8265U', 'Sensors': [...], 'SubHardware': [...]}]
