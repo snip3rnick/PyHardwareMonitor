@@ -9,7 +9,6 @@
 
 *Release/
 *Debug/
-*.dll
 *.a
 *.bak
 *.vcxproj.user
