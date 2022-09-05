@@ -1,16 +1,42 @@
 import json
+import time
+from threading import Timer, Lock
 from wsgiref import simple_server
 from HardwareMonitor.Util import OpenComputer, ToBuiltinTypes
 
 
+class IndefiniteTimer(Timer):
+    def start(self):
+        super().start()
+        return self
+
+    def run(self):
+        delay = self.interval
+        while not self.finished.wait(delay):
+            start_time = time.perf_counter()
+            self.function(*self.args, **self.kwargs)
+            delay = max(0, self.interval - (time.perf_counter() - start_time))
+
+
 class SensorApp():
-    def __init__(self):
-        self.computer = OpenComputer(all=True)
-        self.http = simple_server.make_server('', 8085, self.handler)
+    def __init__(self, port=8085, interval=1.0):
+        self.interval = interval
+        self.mutex    = Lock()
+        self.computer = OpenComputer(all=True, time_window=interval)
+        self.timer    = IndefiniteTimer(interval, self.update).start()
+        self.http     = simple_server.make_server('', port, self.handler)
 
     @property
     def port(self):
         return self.http.server_port
+
+    def update(self):
+        with self.mutex:
+            self.computer.Update()
+
+    def getSensors(self):
+        with self.mutex:
+            return ToBuiltinTypes(self.computer.Hardware)
 
     def serve(self):
         self.http.serve_forever()
@@ -20,7 +46,7 @@ class SensorApp():
 
     def handler(self, environ, respond):
         if environ['PATH_INFO'].lower() == "/data.json":
-            json_str = json.dumps(ToBuiltinTypes(self.computer.Update().Hardware))
+            json_str = json.dumps(self.getSensors())
             respond('200 OK', [('Content-Type', 'application/json')])
             return [json_str.encode()]
         else:
