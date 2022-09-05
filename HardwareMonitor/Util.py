@@ -82,7 +82,7 @@ def OpenComputer(**settings) -> PyComputer:
 
 
 # ------------------------------------------------------------------------------
-def ToBuiltinTypes(obj, exclude=["Parameters"]):
+def ToBuiltinTypes(obj, exclude=["Parameters", "Values"]):
     def process_object(obj):
         # Return 'primitive' python types as such
         if type(obj) in (str, bytes, bool, int, float, tuple, list, dict, set):
