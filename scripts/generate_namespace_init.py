@@ -10,6 +10,7 @@ SYSTEM_SYMBOLS = set(sum(map(list, map(getExported, NAMESPACES)), start=[]))
 BASE_PATH      = Path(__file__).parent.absolute()
 MODULE_PATH    = BASE_PATH / ".." / "HardwareMonitor"
 NAMESPACE_INIT = BASE_PATH / "namespace.py"
+IMPORT_BASE    = "LibreHardwareMonitor"
 
 EXCLUDE_SYMBOLS= ("Type", "Version")
 
@@ -103,12 +104,18 @@ def repairStub(stub_path: Path):
 def processNamespaceDir(namespace_dir: Path):
     has_subdirs = False
     init_py = namespace_dir / "__init__.py"
+    options = {
+        "namespace_root":   IMPORT_BASE,
+        "submodule_name":   namespace_dir.relative_to(MODULE_PATH).as_posix().replace("/", "."),
+    }
     for path in namespace_dir.iterdir():
         if path.is_dir():
             processNamespaceDir(path)
             has_subdirs = True
         if path.name == "__init__.pyi":
-            shutil.copyfile(str(NAMESPACE_INIT), str(init_py))
+            with open(NAMESPACE_INIT, "r") as fin:
+                with open(init_py, "w") as fout:
+                    fout.write(fin.read().format(**options))
             print("updated ", repr(str(init_py.relative_to(BASE_PATH))))
             repairStub(path)
 
