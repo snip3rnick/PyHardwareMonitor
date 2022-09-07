@@ -85,8 +85,12 @@ def OpenComputer(**settings) -> PyComputer:
 def ToBuiltinTypes(obj, exclude=["Parameters", "Values"]):
     def process_object(obj):
         # Return 'primitive' python types as such
-        if type(obj) in (str, bytes, bool, int, float, tuple, list, dict, set):
+        if type(obj) in (str, bytes, bool, int, float):
             return obj
+        elif type(obj) in (list, tuple, set):
+            return list(map(process_object, obj))
+        elif type(obj) in (dict,):
+                return dict((k, process_object(v)) for k,v in obj.items())
         # Handle .NET objects
         if hasattr(obj, "GetType"):
             # Return enums as the string representation of the value
@@ -112,13 +116,11 @@ def ToBuiltinTypes(obj, exclude=["Parameters", "Values"]):
                     if attr in exclude or attr.startswith("IsDefault"):
                         continue
                     val = getattr(obj, attr)
-                    # Simple check to skip methods
-                    if not callable(val):
-                        val_reduced = process_object(val)
-                        if val_reduced is None or val_reduced == [None]:
-                            continue
-                        elif val_reduced or type(val_reduced) is not dict:
-                            obj_dict[attr] = val_reduced
+                    val_reduced = process_object(val)
+                    if val_reduced is None or val_reduced == [None]:
+                        continue
+                    elif val_reduced or type(val_reduced) is not dict:
+                        obj_dict[attr] = val_reduced
                 if not obj_dict:
                     return None
                 # Add the class name to allow for easy filtering
