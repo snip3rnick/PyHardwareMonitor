@@ -7,6 +7,7 @@ from HardwareMonitor.Util import OpenComputer, ToBuiltinTypes
 
 class IndefiniteTimer(Timer):
     def start(self):
+        self.daemon = True
         super().start()
         return self
 
@@ -42,7 +43,8 @@ class SensorApp():
         self.http.serve_forever()
 
     def close(self):
-        self.http.server_close()
+        self.timer.cancel()
+        self.http.shutdown()
 
     def handler(self, environ, respond):
         if environ['PATH_INFO'].lower() == "/data.json":
@@ -55,8 +57,9 @@ class SensorApp():
 
 
 def main():
+    print(f"Loading devices and sensors...")
     app = SensorApp()
-    print(f"Serving on port {app.port}, press 'ctrl + C' to stop")
+    print(f"Serving on port 'http://localhost:{app.port}/data.json', press 'ctrl + C' to stop")
     try:
         app.serve()
     except KeyboardInterrupt:
