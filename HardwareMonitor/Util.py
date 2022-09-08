@@ -1,5 +1,5 @@
 
-from typing import Any, Dict
+import logging
 
 import HardwareMonitor
 from HardwareMonitor.Hardware import Computer, IVisitor, IComputer, IHardware, IParameter, ISensor
@@ -28,6 +28,17 @@ def IsInstanceOfInterface(obj, interface):
 
 
 # ------------------------------------------------------------------------------
+_UPDATE_WARNING_CACHE = set()
+def UpdateHardwareSafe(hardware: IHardware):
+    try:
+        hardware.Update()
+    except:
+        if hardware.Identifier not in _UPDATE_WARNING_CACHE:
+            logging.warning(f"Unable to update HardwareMonitor sensors for {hardware.Identifier} ('{hardware.Name}')")
+            _UPDATE_WARNING_CACHE.add(hardware.Identifier)
+
+
+# ------------------------------------------------------------------------------
 class UpdateVisitor(IVisitor):
     __namespace__ = "HardwareMonitor.Util"
     def __init__(self, time_window=1.0):
@@ -38,9 +49,9 @@ class UpdateVisitor(IVisitor):
         computer.Traverse(self);
 
     def VisitHardware(self, hardware: IHardware):
-        hardware.Update()
+        UpdateHardwareSafe(hardware)
         for subHardware in hardware.SubHardware:
-            subHardware.Update()
+            UpdateHardwareSafe(subHardware)
 
     def VisitParameter(self, parameter: IParameter):
         pass
@@ -49,6 +60,7 @@ class UpdateVisitor(IVisitor):
         sensor.ValuesTimeWindow = self.time_window
 
 
+# ------------------------------------------------------------------------------
 class PyComputer(Computer):
     def __init__(self, time_window=1.0, **settings):
         super().__init__()
@@ -72,7 +84,8 @@ class PyComputer(Computer):
         self.Close()
 
     def __del__(self):
-        self.Close()
+        try:    self.Close()
+        except: pass
 
 
 # ------------------------------------------------------------------------------

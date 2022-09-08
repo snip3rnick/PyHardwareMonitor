@@ -7,6 +7,8 @@ Scripts for generating, altering and extending package resources are located in 
 
 The purpose of this layer is the ability to provide extensive typing information and additional utilities around the LibreHardwareMonitorLib.
 
+> NOTE: Python must have **admin privileges** for `HardwareMonitor` to be able to access all available sensors properly!
+
 
 ## Prerequisites
 - Python 3.6+
