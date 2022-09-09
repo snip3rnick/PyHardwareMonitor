@@ -1,9 +1,56 @@
-
+from __future__ import annotations
 import logging
+from typing import Dict, Iterable, List
 
 import HardwareMonitor
-from HardwareMonitor.Hardware import Computer, IVisitor, IComputer, IHardware, IParameter, ISensor
+from HardwareMonitor.Hardware import Computer, IVisitor, IComputer, IHardware, IParameter, ISensor, HardwareType, SensorType
 from System.Collections.Generic import IList, IDictionary
+
+
+# ------------------------------------------------------------------------------
+def _get_name_to_type(obj):
+    def object_getattr(attr):
+        try:    return getattr(obj, attr)
+        except: pass
+    result = {}
+    for (a, v) in zip(dir(obj), map(object_getattr, dir(obj))):
+        if type(v) in (int, obj):
+            result[v] = result[int(v)] = a
+    return result
+
+HardwareTypeString: Dict[HardwareType|int, str] = _get_name_to_type(HardwareType)
+SensorTypeString:   Dict[SensorType  |int, str] = _get_name_to_type(SensorType)
+
+SensorTypeUnitFormatter = {
+    SensorType.Voltage: "{:.3f} V",
+    SensorType.Current: "{:.3f} A",
+    SensorType.Clock: "{:.1f} MHz",
+    SensorType.Load: "{:.1f} %",
+    SensorType.Temperature: "{:.1f} °C",
+    SensorType.Fan: "{:.0f} RPM",
+    SensorType.Flow: "{:.1f} L/h",
+    SensorType.Control: "{:.1f} %",
+    SensorType.Level: "{:.1f} %",
+    SensorType.Power: "{:.1f} W",
+    SensorType.Data: "{:.1f} GB",
+    SensorType.SmallData: "{:.1f} MB",
+    SensorType.Factor: "{:.3f}",
+    SensorType.Frequency: "{:.1f} Hz",
+    SensorType.Throughput: "{:.1f} B/s",
+    SensorType.TimeSpan: "{}",
+    SensorType.Energy: "{:.0f} mWh",
+}
+
+def SensorValueToString(value: float, type: SensorType) -> str:
+    return SensorTypeUnitFormatter.get(type, "{}").format(value or 0)
+
+
+def GroupSensorsByType(sensors: Iterable[ISensor]) -> List[List[ISensor]]:
+    groups = {}
+    for sensor in sensors:
+        group = groups[sensor.SensorType] = groups.get(sensor.SensorType, [])
+        group.append(sensor)
+    return list(groups.values())
 
 
 # ------------------------------------------------------------------------------

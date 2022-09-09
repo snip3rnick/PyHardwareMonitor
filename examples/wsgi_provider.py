@@ -4,22 +4,13 @@ import json
 import time
 import socket
 from threading import Timer, Lock
-from typing import Iterable, List
+from typing import List
 from wsgiref import simple_server
-from HardwareMonitor.Util import OpenComputer, ToBuiltinTypes
-from HardwareMonitor.Hardware import HardwareType, SensorType, IComputer, IHardware, ISensor
+from HardwareMonitor.Util import OpenComputer, HardwareTypeString, SensorTypeString, SensorValueToString, GroupSensorsByType
+from HardwareMonitor.Hardware import SensorType, IComputer, IHardware, ISensor
 
 
 # ------------------------------------------------------------------------------
-def getattr_items(obj):
-    def object_getattr(attr):
-        try:    return getattr(obj, attr)
-        except: pass
-    return zip(dir(obj), map(object_getattr, dir(obj)))
-
-HardwareTypeString = dict((v, a) for (a, v) in getattr_items(HardwareType) if type(v) in (int, HardwareType))
-SensorTypeString   = dict((v, a) for (a, v) in getattr_items(SensorType)   if type(v) in (int, SensorType))
-
 SensorTypeStringPlurals = {
     SensorType.Voltage: "Voltages",
     SensorType.Current: "Currents",
@@ -30,26 +21,6 @@ SensorTypeStringPlurals = {
     SensorType.Level: "Levels",
     SensorType.Power: "Powers",
     SensorType.Frequency: "Frequencies",
-}
-
-SensorTypeUnitFormat = {
-    SensorType.Voltage: "{:.3f} V",
-    SensorType.Current: "{:.3f} A",
-    SensorType.Clock: "{:.1f} MHz",
-    SensorType.Load: "{:.1f} %",
-    SensorType.Temperature: "{:.1f} °C",
-    SensorType.Fan: "{:d} RPM",
-    SensorType.Flow: "{:.1f} L/h",
-    SensorType.Control: "{:.1f} %",
-    SensorType.Level: "{:.1f} %",
-    SensorType.Power: "{:.1f} W",
-    SensorType.Data: "{:.1f} GB",
-    SensorType.SmallData: "{:.1f} MB",
-    SensorType.Factor: "{:.3f}",
-    SensorType.Frequency: "{:.1f} Hz",
-    SensorType.Throughput: "{:.1f} B/s",
-    SensorType.TimeSpan: "{}",
-    SensorType.Energy: "{:d} mWh",
 }
 
 
@@ -65,21 +36,13 @@ class NodeFormatter():
         return dict(id=self.getId(), Text=Text, Min=Min, Value=Value, Max=Max,
                     ImageURL=ImageURL, Children=[], **kwargs)
 
-    def groupSensors(self, sensors: Iterable[ISensor]) -> List[List[ISensor]]:
-        groups = {}
-        for sensor in sensors:
-            group = groups[sensor.SensorType] = groups.get(sensor.SensorType, [])
-            group.append(sensor)
-        return list(groups.values())
-
     def makeSensorGroupNode(self, sensors: List[ISensor]):
         sensor_type = sensors[0].SensorType
         type_str    = SensorTypeString[sensor_type]
-        unit_format = SensorTypeUnitFormat.get(sensor_type, "{}")
         def makeSensorNode(sensor: ISensor):
-            min_str = unit_format.format(sensor.Min or 0)
-            val_str = unit_format.format(sensor.Value or 0)
-            max_str = unit_format.format(sensor.Max or 0)
+            min_str = SensorValueToString(sensor.Min,   sensor_type)
+            val_str = SensorValueToString(sensor.Value, sensor_type)
+            max_str = SensorValueToString(sensor.Max,   sensor_type)
             return self._makeNode(sensor.Name, Min=min_str, Value=val_str, Max=max_str, Type=type_str,
                                   SensorId=sensor.Identifier.ToString())
 
@@ -88,9 +51,10 @@ class NodeFormatter():
         return group_node
 
     def makeHardwareNode(self, hardware: IHardware):
-        hardware_type = HardwareTypeString[hardware.HardwareType]
-        hardware_node = self._makeNode(hardware.Name, Type=hardware_type)
-        hardware_node["Children"].extend(map(self.makeSensorGroupNode, self.groupSensors(hardware.Sensors)))
+        sensors_grouped = GroupSensorsByType(hardware.Sensors)
+        hardware_type   = HardwareTypeString[hardware.HardwareType]
+        hardware_node   = self._makeNode(hardware.Name, Type=hardware_type)
+        hardware_node["Children"].extend(map(self.makeSensorGroupNode, sensors_grouped))
         hardware_node["Children"].extend(map(self.makeHardwareNode, hardware.SubHardware))
         return hardware_node
 
@@ -140,7 +104,6 @@ class SensorApp():
     def getSensors(self):
         with self.mutex:
             return NodeFormatter().buildNodeTree(self.computer)
-            # return ToBuiltinTypes(self.computer.Hardware)
 
     def serve(self):
         self.http.serve_forever()
