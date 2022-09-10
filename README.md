@@ -7,7 +7,7 @@ Scripts for generating, altering and extending package resources are located in 
 
 The purpose of this layer is the ability to provide extensive typing information and additional utilities around the LibreHardwareMonitorLib.
 
-> NOTE: Python must have **admin privileges** for `HardwareMonitor` to be able to access all available sensors properly!
+> **Note:** Python must have **admin privileges** for `HardwareMonitor` to be able to access all available sensors properly!
 
 
 ## Prerequisites
@@ -71,29 +71,60 @@ for hardware in computer.Hardware:
 computer.Close()
 ```
 
+---
 
 ## Utilities
 
 Utilities are located in the `HardwareMonitor.Util` module.
+
+### Function `OpenComputer`
+
 The `OpenComputer` function provides a shorthand for creating the `HardwareMonitor.Hardware.Computer` instance including the settings and update visitor.  
-Settings are given as keyword arguments, the following example just enables the `cpu` and `motherboard` component.
+Settings are given as keyword arguments, the following example enables just the `cpu` and `motherboard` component.
 
 ```python
-from HardwareMonitor.Util import OpenComputer
-
-computer = OpenComputer(cpu=True, motherboard=True)  # use with 'all=True' to enable every component
+computer = OpenComputer(cpu=True, motherboard=True)  # use 'all=True' to enable every component
+# Access sensors
+...
+computer.Update()  # Updates all sensors
 ...
 computer.Close()
 ```
 
----
+### Function `ToBuiltinTypes`
 
-Instances from the `HardwareMonitor` module can be reduced to primitive python types instead of object using the `ToBuiltinTypes` function.  
-Objects are recursively converted to Python builtin types (`dict`, `list`, ...) which is particularly useful if the data is to be serialized (e.g. with json).
+Instances from the `HardwareMonitor` module can be reduced to primitive python types instead of `HarwareMonitor` object instances with the `ToBuiltinTypes` function.  
+Objects are recursively converted to Python builtin types (`dict`, `list`, ...).
+This can be useful for applications that serialized the data (e.g. with json).
 
 ```python
-computer = OpenComputer(cpu=True)  # use with 'all=True' to enable every component
+computer = OpenComputer(cpu=True)
 
 data = ToBuiltinTypes(computer.Hardware)
 # [{'Type': 'Hardware', 'HardwareType': 'Cpu', 'Name': 'Intel Core i5-8265U', 'Sensors': [...], 'SubHardware': [...]}]
 ```
+
+### Function `GroupSensorsByType`
+
+Sensors of an instance of `HardwareMonitor.Harware.Hardware` are held in a flat list.  
+The helper function `GroupSensorsByType` converts the sensor list into a list of lists grouping sensors by type.
+
+```python
+GroupSensorsByType(sensors: Iterable[ISensor]) -> List[List[ISensor]]
+```
+
+### Function `SensorValueToString`
+
+The helper function `SensorValueToString` converts sensor values to strings appending with the appropriate unit.
+
+```python
+SensorValueToString(value: float, type: SensorType) -> str
+# returns "3100.0 MHz" for value=3100.0 with type=SensorType.Clock
+```
+
+### Dictionary `HardwareTypeString` and `SensorTypeString`
+
+These two mappings convert values for `HardwareType` (or `SensorType`) to a string.  
+Both the integer value for the enum or the instances of the enum value (e.g. `HardwareType.Cpu`) are present as keys.
+
+> In some environments the type fields were set to integers in others to the corresponding type instance.
