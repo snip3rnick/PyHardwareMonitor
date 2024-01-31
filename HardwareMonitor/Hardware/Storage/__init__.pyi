@@ -1,8 +1,10 @@
+from HardwareMonitor.Hardware import Hardware, ISettings, IVisitor, ParameterDescription
 from HardwareMonitor._util.types import AsyncCallback, Byte, IAsyncResult, IReadOnlyList, Int16, IntPtr, Nullable, Object, Single, UInt16, UInt32, UInt64
 from typing import overload, Tuple, Set, Iterable, List
 
 
 class AbstractStorage(Hardware):
+    def Close(self) -> None: ...
     def CreateInstance(deviceId: str, driveNumber: UInt32, diskSize: UInt64, scsiPort: int, settings: ISettings) -> AbstractStorage: ...
     @property
     def DriveInfos(self) -> Set[DriveInfo]: ...

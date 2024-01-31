@@ -1,6 +1,10 @@
 from typing import overload, Tuple, Set, Iterable, List
 
 
+class DISK_PERFORMANCE:
+    pass
+
+
 class GROUP_AFFINITY:
     pass
 

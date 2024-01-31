@@ -1,5 +1,5 @@
 
-import clr
+import clr  # noqa: F401
 from pathlib import Path
 
 
@@ -21,7 +21,7 @@ def getExported(namespace):
     if len(split) == 2:
         fromlist = (split[0],)
     module = __import__(namespace, fromlist=fromlist)
-    return set([attr for attr in module.__all__ if not "`" in attr]) - EXCLUDE_SYMBOLS
+    return set([attr for attr in module.__all__ if "`" not in attr]) - EXCLUDE_SYMBOLS
 
 
 # ------------------------------------------------------------------------------

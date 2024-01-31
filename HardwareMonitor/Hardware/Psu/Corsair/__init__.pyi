@@ -1,3 +1,4 @@
+from HardwareMonitor.Hardware import ISettings
 from HardwareMonitor._util.types import IReadOnlyList
 from typing import overload, Tuple, Set, Iterable, List
 

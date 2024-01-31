@@ -1,5 +1,6 @@
 from HardwareMonitor._util.types import IReadOnlyList
-from typing import overload, Tuple, Set, Iterable, List
+from HardwareMonitor.Hardware import ISettings
+from typing import overload, overload, Tuple, Set, Iterable, List
 
 
 class AeroCoolGroup:

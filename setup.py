@@ -5,7 +5,7 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 setup(
     name="PyHardwareMonitor",
-    version="1.0.3",
+    version="0.9.3",
     author="Nicholas Feix",
     author_email="nf@fconsoft.com",
     description="Python import layer for the LibreHardwareMonitorLib assembly.",

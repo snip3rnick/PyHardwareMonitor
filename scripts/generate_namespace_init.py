@@ -1,5 +1,4 @@
 import re
-import shutil
 from pathlib import Path
 
 from generate_types_util import NAMESPACES, getExported
