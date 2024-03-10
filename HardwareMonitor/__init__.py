@@ -10,7 +10,7 @@ logger = logging.getLogger("PyHardwareMonitor")
 
 
 if not ctypes.windll.shell32.IsUserAnAdmin():
-    logger.warning("Admin privileges are required for 'HarwareMonitor' to work properly")
+    logger.warning("Admin privileges are required for 'HardwareMonitor' to work properly")
 
 ASSEMBLY_NAME = "LibreHardwareMonitor"
 
