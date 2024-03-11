@@ -6,11 +6,11 @@ import logging
 from   pathlib import Path
 
 
-logging.basicConfig(format='%(levelname)s: %(message)s')
+logger = logging.getLogger("PyHardwareMonitor")
 
 
 if not ctypes.windll.shell32.IsUserAnAdmin():
-    logging.warning("Admin privileges are required for 'HarwareMonitor' to work properly")
+    logger.warning("Admin privileges are required for 'HardwareMonitor' to work properly")
 
 ASSEMBLY_NAME = "LibreHardwareMonitor"
 

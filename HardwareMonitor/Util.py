@@ -6,6 +6,7 @@ import HardwareMonitor
 from HardwareMonitor.Hardware import Computer, IVisitor, IComputer, IHardware, IParameter, ISensor, HardwareType, SensorType
 from System.Collections.Generic import IList, IDictionary
 
+logger = logging.getLogger("PyHardwareMonitor")
 
 # ------------------------------------------------------------------------------
 def _get_name_to_type(obj):
@@ -81,7 +82,7 @@ def UpdateHardwareSafe(hardware: IHardware):
         hardware.Update()
     except:
         if hardware.Identifier not in _UPDATE_WARNING_CACHE:
-            logging.warning(f"Unable to update HardwareMonitor sensors for {hardware.Identifier} ('{hardware.Name}')")
+            logger.warning(f"Unable to update HardwareMonitor sensors for {hardware.Identifier} ('{hardware.Name}')")
             _UPDATE_WARNING_CACHE.add(hardware.Identifier)
 
 
