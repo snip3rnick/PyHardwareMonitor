@@ -5,6 +5,7 @@ sys.path.insert(0, os.path.abspath(__file__ + "/../.."))
 
 
 from HardwareMonitor.Hardware import Computer, IVisitor, IComputer, IHardware, IParameter, ISensor
+from HardwareMonitor.Util import SensorValueToString
 
 
 class UpdateVisitor(IVisitor):
@@ -42,8 +43,8 @@ for hardware in computer.Hardware:
     for subhardware  in hardware.SubHardware:
         print(f"\tSubhardware: {subhardware.Name}")
         for sensor in subhardware.Sensors:
-            print(f"\t\tSensor: {sensor.Name}, value: {sensor.Value}")
+            print(f"\t\tSensor: {sensor.Name}, value: {SensorValueToString(sensor.Value, sensor.SensorType)}")
     for sensor in hardware.Sensors:
-        print(f"\tSensor: {sensor.Name}, value: {sensor.Value}")
+        print(f"\tSensor: {sensor.Name}, value: {SensorValueToString(sensor.Value, sensor.SensorType)}")
 
 computer.Close()
