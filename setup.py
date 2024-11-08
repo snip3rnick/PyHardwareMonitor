@@ -4,8 +4,8 @@ from setuptools import setup, find_packages
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 setup(
-    name="PyHardwareMonitor",
-    version="0.9.3",
+    name="HardwareMonitor",
+    version="1.0.0",
     author="Nicholas Feix",
     author_email="nf@fconsoft.com",
     description="Python import layer for the LibreHardwareMonitorLib assembly.",
@@ -13,6 +13,8 @@ setup(
     license="BSD",
     classifiers=[
         "License :: Other/Proprietary License",
+        "Environment :: Win32 (MS Windows)",
+        "Operating System :: Microsoft :: Windows",
     ],
 
     install_requires=["pythonnet"],
