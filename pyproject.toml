@@ -6,6 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "HardwareMonitor"
 authors = [{ name = "Nicholas Feix", email = "nf@fconsoft.com" }]
 description = "Python import layer for the LibreHardwareMonitorLib assembly."
+readme = "README.md"
 keywords = ["monitoring", "sensors", "LibreHardwareMonitor"]
 requires-python = ">=3.6"
 license = { file = "LICENSE" }
