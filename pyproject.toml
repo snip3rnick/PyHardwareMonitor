@@ -40,3 +40,5 @@ exclude = [
 
 [tool.setuptools.package-data]
 "HardwareMonitor" = ["lib/*"]
+
+[tool.setuptools_scm]
