@@ -17,6 +17,14 @@ The purpose of this layer is the ability to provide extensive typing information
 
 
 ## Installation
+
+Install from PyPi directly
+```
+pip3 install HardwareMonitor
+```
+
+or install locally from source
+
 ```
 git clone https://github.com/snip3rnick/PyHardwareMonitor
 cd PyHardwareMonitor
@@ -93,7 +101,7 @@ computer.Close()
 
 ### Function `ToBuiltinTypes`
 
-Instances from the `HardwareMonitor` module can be reduced to primitive python types instead of `HarwareMonitor` object instances with the `ToBuiltinTypes` function.  
+Instances from the `HardwareMonitor` module can be reduced to primitive python types instead of `HardwareMonitor` object instances with the `ToBuiltinTypes` function.  
 Objects are recursively converted to Python builtin types (`dict`, `list`, ...).
 This can be useful for applications that serialized the data (e.g. with json).
 
