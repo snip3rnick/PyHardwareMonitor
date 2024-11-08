@@ -77,21 +77,20 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install Poetry
-        run: |
-          curl -sSL https://install.python-poetry.org | python3 -
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-      - name: Set project version with Poetry
-        run: |
-          poetry version ${{ needs.details.outputs.new_version }}
-
-      - name: Install dependencies
-        run: poetry install --sync --no-interaction
+      - name: Install pypa/build
+        run: >-
+          python -m
+          pip install
+          build
+          --user
 
       - name: Build source and wheel distribution
-        run: |
-          poetry build
+        run: >-
+          python -m
+          build
+          --sdist
+          --wheel
+          --outdir dist
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3

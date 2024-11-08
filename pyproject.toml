@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools", "setuptools_scm[toml]"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "HardwareMonitor"
+authors = [{ name = "Nicholas Feix", email = "nf@fconsoft.com" }]
+description = "Python import layer for the LibreHardwareMonitorLib assembly."
+keywords = ["monitoring", "sensors", "LibreHardwareMonitor"]
+requires-python = ">=3.6"
+license = { file = "LICENSE" }
+classifiers = [
+    "License :: Other/Proprietary License",
+    "Intended Audience :: Developers",
+    "Environment :: Win32 (MS Windows)",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Topic :: System :: Monitoring",
+]
+dependencies = [
+    "pythonnet"
+]
+dynamic = ["version"]
+
+[project.urls]
+Repository = "https://github.com/snip3rnick/PyHardwareMonitor"
+
+[tool.setuptools]
+include-package-data = true
+packages = ["HardwareMonitor"]
+
+[tool.build-system]
+exclude = [
+    ".github/*",
+    "examples/*",
+    "scripts/*",
+    "submodules/*",
+    "tests/*",
+]
+
+[tool.setuptools.package-data]
+"HardwareMonitor" = ["lib/*"]
