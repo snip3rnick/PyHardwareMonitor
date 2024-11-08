@@ -25,16 +25,17 @@ def getExported(namespace):
 
 
 # ------------------------------------------------------------------------------
-def generateTypesStub():
+def generateTypesUtilStub():
     lines = ["# Generated stub file for some types from the CLR\n", "\n"]
     for namespace in NAMESPACES:
         lines.append(f"# Symbols from '{namespace}' namespace\n")
-        for symbol in getExported(namespace):
+        for symbol in sorted(getExported(namespace), key=str.lower):
             lines.append(f"class {symbol}: ...\n")
         lines.append("\n")
     with open(TYPES_STUB, "w") as fobj:
         fobj.writelines(lines)
+    print("generated typing utility")
 
 
 if __name__ == "__main__":
-    generateTypesStub()
+    generateTypesUtilStub()
