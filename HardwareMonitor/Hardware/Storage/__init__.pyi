@@ -1,6 +1,6 @@
 from HardwareMonitor.Hardware import Hardware, ISettings, IVisitor, ParameterDescription
 from HardwareMonitor._util.types import AsyncCallback, Byte, IAsyncResult, IReadOnlyList, Int16, IntPtr, Nullable, Object, Single, UInt16, UInt32, UInt64
-from typing import overload, Tuple, Set, Iterable, List
+from typing import Set, Tuple, overload
 
 
 class AbstractStorage(Hardware):

@@ -1,5 +1,3 @@
-from HardwareMonitor._util.types import OperatingSystem
-from typing import overload, Tuple, Set, Iterable, List
 
 
 class OperatingSystem:

@@ -1,3 +1,3 @@
-# Generated namespace __init__.py file for 'HardwareMonitor.Hardware.CPU'
+# Generated namespace __init__.py file for 'HardwareMonitor.Hardware.Cpu'
 
-from LibreHardwareMonitor.Hardware.CPU import *
+from LibreHardwareMonitor.Hardware.Cpu import *

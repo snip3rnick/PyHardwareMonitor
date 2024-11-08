@@ -1,6 +1,6 @@
-from HardwareMonitor._util.types import UInt32
 from HardwareMonitor.Hardware import GroupAffinity, Hardware, ISettings
-from typing import overload, Tuple, Set, Iterable, List
+from HardwareMonitor._util.types import UInt32
+from typing import List, Set
 
 
 class CpuId:

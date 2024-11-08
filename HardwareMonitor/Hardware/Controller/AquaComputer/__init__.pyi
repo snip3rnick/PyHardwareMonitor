@@ -1,6 +1,5 @@
-from HardwareMonitor._util.types import IReadOnlyList
 from HardwareMonitor.Hardware import ISettings
-from typing import overload, overload, Tuple, Set, Iterable, List
+from HardwareMonitor._util.types import IReadOnlyList
 
 
 class AquaComputerGroup:

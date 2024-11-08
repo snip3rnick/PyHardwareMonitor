@@ -1,9 +1,9 @@
-__all__ = ['Cpu','Gpu','Motherboard','Storage']
 from HardwareMonitor._util.types import AsyncCallback, Byte, DateTime, IAsyncResult, IDictionary, IReadOnlyList, IntPtr, Nullable, Object, Single, TimeSpan, UInt16, UInt64
-from typing import overload, Tuple, Set, Iterable, List
+__all__ = ['Cpu','Gpu','Motherboard','Storage']
+from typing import Iterable, List, Set, overload
 
 
-class BaseBoardInformation("InformationBase"):
+class BaseBoardInformation(InformationBase):
     @property
     def ManufacturerName(self) -> str: ...
     @property
@@ -14,7 +14,7 @@ class BaseBoardInformation("InformationBase"):
     def Version(self) -> str: ...
 
 
-class BiosInformation("InformationBase"):
+class BiosInformation(InformationBase):
     @property
     def Date(self) -> Nullable: ...
     @property
@@ -49,7 +49,7 @@ class CacheDesignation:
     L3 = 3
 
 
-class CacheInformation("InformationBase"):
+class CacheInformation(InformationBase):
     @property
     def Associativity(self) -> CacheAssociativity: ...
     @property
@@ -368,7 +368,7 @@ class IVisitor:
     def VisitSensor(self, sensor: ISensor) -> None: ...
 
 
-class MemoryDevice("InformationBase"):
+class MemoryDevice(InformationBase):
     @property
     def BankLocator(self) -> str: ...
     @property
@@ -661,7 +661,7 @@ class ProcessorFamily:
     VideoProcessor = 267
 
 
-class ProcessorInformation("InformationBase"):
+class ProcessorInformation(InformationBase):
     @property
     def Characteristics(self) -> ProcessorCharacteristics: ...
     @property
@@ -832,7 +832,7 @@ class SMBios:
     def GetReport(self) -> str: ...
 
 
-class SystemEnclosure("InformationBase"):
+class SystemEnclosure(InformationBase):
     @property
     def AssetTag(self) -> str: ...
     @property
@@ -921,7 +921,7 @@ class SystemEnclosureType:
     StickPc = 36
 
 
-class SystemInformation("InformationBase"):
+class SystemInformation(InformationBase):
     @property
     def Family(self) -> str: ...
     @property
