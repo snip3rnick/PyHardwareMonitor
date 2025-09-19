@@ -11,7 +11,7 @@ from HardwareMonitor.Util import SensorValueToString
 class UpdateVisitor(IVisitor):
     __namespace__ = "TestHardwareMonitor"
     def VisitComputer(self, computer: IComputer):
-        computer.Traverse(self);
+        computer.Traverse(self)
 
     def VisitHardware(self, hardware: IHardware):
         hardware.Update()

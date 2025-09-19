@@ -1,5 +1,5 @@
 from HardwareMonitor.Hardware import Hardware, ISettings, IVisitor, ParameterDescription
-from HardwareMonitor._util.types import AsyncCallback, Byte, IAsyncResult, IReadOnlyList, Int16, IntPtr, Nullable, Object, Single, UInt16, UInt32, UInt64
+from HardwareMonitor._util.types import AsyncCallback, Byte, IAsyncResult, IReadOnlyList, Int16, IntPtr, Nullable, Object, Single, TimeSpan, UInt16, UInt32, UInt64
 from typing import Set, Tuple, overload
 
 
@@ -25,6 +25,10 @@ class AtaStorage(AbstractStorage):
     def Smart(self) -> ISmart: ...
     @property
     def SmartAttributes(self) -> IReadOnlyList: ...
+    @property
+    def ThrottleInterval() -> TimeSpan: ...
+    @ThrottleInterval.setter
+    def ThrottleInterval(value: TimeSpan) -> None: ...
 
 
 class GenericHardDisk(AtaStorage):
