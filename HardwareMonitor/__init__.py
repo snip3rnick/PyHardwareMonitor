@@ -30,7 +30,11 @@ if not ctypes.windll.shell32.IsUserAnAdmin():
     logger.warning("Admin privileges are required for 'HardwareMonitor' to work properly.")
 
 if not _checkForPawnIO():
-    logger.warning("PawnIO is not installed - Many sensor will not be available.\nPlease install this module manually: 'https://github.com/namazso/PawnIO.Setup/releases/latest/download/PawnIO_setup.exe'.")
+    logger.warning("""PawnIO is not installed - Many sensor will not be available.
+    Please install manually through one of the following methods:
+        1) Run the terminal command 'winget install PawnIO'
+        2) Download and run 'https://github.com/namazso/PawnIO.Setup/releases/latest/download/PawnIO_setup.exe'
+""")
 
 
 ASSEMBLY_NAME = "LibreHardwareMonitor"
