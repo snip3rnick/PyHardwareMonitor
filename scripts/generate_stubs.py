@@ -11,7 +11,7 @@ SUBMODULE_PATH  = BASE_PATH / ".." / "submodules"
 STUBBLER_PATH   = SUBMODULE_PATH / "pythonstubs" / "builder" / "bin" / "PyStubbler.exe"
 ASSEMBLY_PATH   = SUBMODULE_PATH / "LibreHardwareMonitor" / "bin" / "Release" / "net4*"
 
-ASSEMBLY_NAMES  = ("LibreHardwareMonitorLib.dll", "HidSharp.dll")
+ASSEMBLY_NAMES  = ("LibreHardwareMonitorLib.dll", "HidSharp.dll", "RAMSPDToolkit-NDD.dll")
 
 
 def collectAssembly():

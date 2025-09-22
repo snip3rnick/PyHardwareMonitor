@@ -1,4 +1,4 @@
-from HardwareMonitor._util.types import AsyncCallback, Byte, DateTime, IAsyncResult, IDictionary, IReadOnlyList, IntPtr, Nullable, Object, Single, TimeSpan, UInt16, UInt64
+from HardwareMonitor._util.types import AsyncCallback, Byte, DateTime, IAsyncResult, IDictionary, IReadOnlyList, IntPtr, Nullable, Object, Single, TimeSpan, UInt16, UInt32, UInt64
 __all__ = ['Cpu','Gpu','Motherboard','Storage']
 from typing import Iterable, List, Set, overload
 
@@ -245,6 +245,8 @@ class Identifier:
     @overload
     def __init__(self, identifiers: Set[str]): ...
     @overload
+    def __init__(self, dev: HidDevice): ...
+    @overload
     def __init__(self, identifier: Identifier, extensions: Set[str]): ...
     def CompareTo(self, other: Identifier) -> int: ...
     def Equals(self, obj: Object) -> bool: ...
@@ -384,7 +386,7 @@ class MemoryDevice(InformationBase):
     @property
     def SerialNumber(self) -> str: ...
     @property
-    def Size(self) -> UInt16: ...
+    def Size(self) -> UInt32: ...
     @property
     def Speed(self) -> UInt16: ...
     @property
@@ -793,8 +795,11 @@ class SensorType:
     SmallData = 13
     Throughput = 14
     TimeSpan = 15
-    Energy = 16
-    Noise = 17
+    Timing = 16
+    Energy = 17
+    Noise = 18
+    Conductivity = 19
+    Humidity = 20
 
 
 class SensorValue:

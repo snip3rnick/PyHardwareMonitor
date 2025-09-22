@@ -14,6 +14,7 @@ The purpose of this layer is the ability to provide extensive typing information
 - Python 3.6+
   - pythonnet
   - .NET 4.7
+- PawnIO (for system sensors)
 
 
 ## Installation
@@ -30,6 +31,16 @@ git clone https://github.com/snip3rnick/PyHardwareMonitor
 cd PyHardwareMonitor
 pip3 install .
 ```
+
+### PawnIO Input/Output Driver
+
+For many system sensors (eg. motherboard) it is required to install the [PawnIO driver](https://pawnio.eu/).  
+The driver can be installed using ``winget``
+```
+winget install PawnIO
+```
+
+Alternatively you may download the latest version from the [GitHub release](https://github.com/namazso/PawnIO.Setup/releases/latest/download/PawnIO_setup.exe) page.
 
 
 ## Basic Usage
