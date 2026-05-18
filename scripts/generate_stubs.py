@@ -15,8 +15,11 @@ LICENSE_PATH       = SUBMODULE_PATH / "LibreHardwareMonitor" / "LICENSE"
 LHM_CSPROJ         = SUBMODULE_PATH / "LibreHardwareMonitor" / "LibreHardwareMonitorLib" / "LibreHardwareMonitorLib.csproj"
 STUBBLER_SLN       = SUBMODULE_PATH / "pythonstubs" / "builder" / "PyStubblerNET.sln"
 
-ASSEMBLY_PLATFORMS = ("x64", "x86", "ARM64")
-NO_COPY_LIBS       = ("")
+ASSEMBLY_PLATFORMS = ("x64", "x86")  # , "ARM64"
+NO_COPY_LIBS       = ("System.Buffers.dll", "System.CodeDom.dll",
+                      "System.Security.AccessControl.dll",
+                      "System.Security.Principal.Windows.dll",
+                      "System.Threading.AccessControl.dll")
 
 
 def buildLibreHardwareMonitor():
@@ -62,6 +65,8 @@ def collectAssembly():
         dest = MODULE_LIB_PATH / platform
         dest.mkdir(exist_ok=True)
         for dll in src.glob("*.dll"):
+            if dll.name in NO_COPY_LIBS:
+                continue
             if required is None or dll.name in required:
                 shutil.copyfile(dll, dest / dll.name)
     shutil.copyfile(LICENSE_PATH, MODULE_LIB_PATH / LICENSE_PATH.name)
