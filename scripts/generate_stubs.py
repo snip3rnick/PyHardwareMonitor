@@ -47,6 +47,7 @@ def _required_dlls(deps_json_path: Path) -> set:
     return names
 
 def collectAssembly():
+    MODULE_LIB_PATH.mkdir(exist_ok=True)
     for platform in ASSEMBLY_PLATFORMS:
         src = next(iter(sorted((ASSEMBLY_PATH / platform).glob("net4*"))), None)
         if src is None:
