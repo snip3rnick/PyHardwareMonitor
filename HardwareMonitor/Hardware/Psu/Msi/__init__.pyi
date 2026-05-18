@@ -2,7 +2,7 @@ from HardwareMonitor.Hardware import ISettings
 from HardwareMonitor._util.types import IReadOnlyList
 
 
-class CorsairPsuGroup:
+class MsiPsuGroup:
     def __init__(self, settings: ISettings): ...
     def Close(self) -> None: ...
     @property

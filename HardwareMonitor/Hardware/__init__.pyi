@@ -1,5 +1,5 @@
 from HardwareMonitor._util.types import AsyncCallback, Byte, DateTime, IAsyncResult, IDictionary, IReadOnlyList, IntPtr, Nullable, Object, Single, TimeSpan, UInt16, UInt32, UInt64
-__all__ = ['Cpu','Gpu','Motherboard','Storage']
+__all__ = ['Cpu','Gpu','Motherboard','PowerMonitor','Psu','Storage']
 from typing import Iterable, List, Set, overload
 
 
@@ -86,6 +86,8 @@ class Computer:
     @property
     def IsNetworkEnabled(self) -> bool: ...
     @property
+    def IsPowerMonitorEnabled(self) -> bool: ...
+    @property
     def IsPsuEnabled(self) -> bool: ...
     @property
     def IsStorageEnabled(self) -> bool: ...
@@ -110,6 +112,8 @@ class Computer:
     def IsMotherboardEnabled(self, value: bool) -> None: ...
     @IsNetworkEnabled.setter
     def IsNetworkEnabled(self, value: bool) -> None: ...
+    @IsPowerMonitorEnabled.setter
+    def IsPowerMonitorEnabled(self, value: bool) -> None: ...
     @IsPsuEnabled.setter
     def IsPsuEnabled(self, value: bool) -> None: ...
     @IsStorageEnabled.setter
@@ -121,6 +125,12 @@ class ControlMode:
     Undefined = 0
     Software = 1
     Default = 2
+
+
+class CoreType:
+    Unknown = 0
+    Efficient = 32
+    Performance = 64
 
 
 class GroupAffinity:
@@ -187,6 +197,7 @@ class HardwareType:
     EmbeddedController = 10
     Psu = 11
     Battery = 12
+    PowerMonitor = 13
 
 
 class IComputer:
@@ -208,6 +219,8 @@ class IComputer:
     def IsMotherboardEnabled(self) -> bool: ...
     @property
     def IsNetworkEnabled(self) -> bool: ...
+    @property
+    def IsPowerMonitorEnabled(self) -> bool: ...
     @property
     def IsPsuEnabled(self) -> bool: ...
     @property
