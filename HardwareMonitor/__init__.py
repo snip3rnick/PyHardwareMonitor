@@ -3,6 +3,8 @@ import sys
 import clr
 import ctypes
 import logging
+import struct
+import platform as _platform
 from   pathlib import Path
 
 
@@ -39,7 +41,10 @@ if not _checkForPawnIO():
 
 ASSEMBLY_NAME = "LibreHardwareMonitor"
 
-_LIB_PATH = Path(__file__).parent.joinpath("lib").absolute()
+_machine = _platform.machine().lower()
+_arch = "ARM64" if _machine == "arm64" else ("x64" if struct.calcsize("P") == 8 else "x86")
+_arch_lib = Path(__file__).parent.joinpath("lib", _arch)
+_LIB_PATH = (_arch_lib if _arch_lib.is_dir() else Path(__file__).parent.joinpath("lib")).absolute()
 sys.path.insert(0, str(_LIB_PATH))
 __reference__ = clr.AddReference(str(_LIB_PATH / (ASSEMBLY_NAME + "Lib.dll")))
 
