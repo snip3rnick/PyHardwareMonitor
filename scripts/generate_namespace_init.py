@@ -9,7 +9,7 @@ HARDWARE_SYMBOLS = set()
 
 BASE_PATH      = Path(__file__).parent.absolute()
 MODULE_PATH    = BASE_PATH / ".." / "HardwareMonitor"
-NAMESPACE_INIT = BASE_PATH / "namespace_template.py"
+NAMESPACE_INIT = BASE_PATH / "namespace_init.template"
 IMPORT_BASE    = "LibreHardwareMonitor"
 
 EXCLUDE_SYMBOLS  = ("Type", "Version", "OperatingSystem")
