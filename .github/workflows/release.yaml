@@ -140,8 +140,8 @@ jobs:
       name: release
 
     steps:
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
+      - name: Retrieve release distributions
+        uses: actions/download-artifact@v5
         with:
           pattern: dist-*
           path: dist
@@ -162,8 +162,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
+      - name: Download artifacts
+        uses: actions/download-artifact@v5
         with:
           pattern: dist-*
           path: dist
