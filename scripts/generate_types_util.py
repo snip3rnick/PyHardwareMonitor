@@ -32,8 +32,11 @@ def generateTypesUtilStub():
         for symbol in sorted(getExported(namespace), key=str.lower):
             lines.append(f"class {symbol}: ...\n")
         lines.append("\n")
+    TYPES_STUB.parent.mkdir(exist_ok=True)
     with open(TYPES_STUB, "w") as fobj:
         fobj.writelines(lines)
+    with open(TYPES_STUB.with_suffix(".py"), "w") as fobj:
+        pass
     print("generated typing utility")
 
 
