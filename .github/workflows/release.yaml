@@ -117,6 +117,8 @@ jobs:
           rm -rf HardwareMonitor/lib/x64 HardwareMonitor/lib/x86 HardwareMonitor/lib/ARM64
 
       - name: Build wheel
+        env:
+          SETUPTOOLS_SCM_PRETEND_VERSION: ${{ needs.details.outputs.new_version }}
         run: python -m build --wheel --outdir dist
 
       - name: Apply platform tag
