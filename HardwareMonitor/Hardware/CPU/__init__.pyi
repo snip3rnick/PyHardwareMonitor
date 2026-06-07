@@ -1,4 +1,3 @@
-from HardwareMonitor.Hardware import GroupAffinity, Hardware, ISettings
 from HardwareMonitor._util.types import UInt32
 from typing import List, Set
 
@@ -12,6 +11,8 @@ class CpuId:
     def BrandString(self) -> str: ...
     @property
     def CoreId(self) -> UInt32: ...
+    @property
+    def CoreType(self) -> CoreType: ...
     @property
     def Data(self) -> List[UInt32]: ...
     @property

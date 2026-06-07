@@ -1,22 +1,25 @@
 # Test script enumerating all hardware components and listing available sensors
 
-import sys, os
+import os
+import sys
+from typing import cast
+
 sys.path.insert(0, os.path.abspath(__file__ + "/../.."))
 
 
-from HardwareMonitor.Hardware import Computer, IVisitor, IComputer, IHardware, IParameter, ISensor
+from HardwareMonitor.Hardware import Computer, Hardware, IParameter, ISensor, IVisitor
 from HardwareMonitor.Util import SensorValueToString
 
 
 class UpdateVisitor(IVisitor):
     __namespace__ = "TestHardwareMonitor"
-    def VisitComputer(self, computer: IComputer):
+    def VisitComputer(self, computer: Computer):
         computer.Traverse(self)
 
-    def VisitHardware(self, hardware: IHardware):
+    def VisitHardware(self, hardware: Hardware):
         hardware.Update()
         for subHardware in hardware.SubHardware:
-            subHardware.Update()
+            cast(Hardware, subHardware).Accept(self)
 
     def VisitParameter(self, parameter: IParameter):
         pass

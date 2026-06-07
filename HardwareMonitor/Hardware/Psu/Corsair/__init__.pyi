@@ -1,9 +1,4 @@
-from HardwareMonitor.Hardware import ISettings
 from HardwareMonitor._util.types import IReadOnlyList
-
-
-class CommunicationProtocolError:
-    def __init__(self, device: HidDevice, message: str): ...
 
 
 class CorsairPsuGroup:

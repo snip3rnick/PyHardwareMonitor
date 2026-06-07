@@ -9,7 +9,7 @@ HARDWARE_SYMBOLS = set()
 
 BASE_PATH      = Path(__file__).parent.absolute()
 MODULE_PATH    = BASE_PATH / ".." / "HardwareMonitor"
-NAMESPACE_INIT = BASE_PATH / "namespace_template.py"
+NAMESPACE_INIT = BASE_PATH / "namespace_init.template"
 IMPORT_BASE    = "LibreHardwareMonitor"
 
 EXCLUDE_SYMBOLS  = ("Type", "Version", "OperatingSystem")
@@ -113,25 +113,64 @@ def addHardwareSymbolImport(stub_data: str):
     if not HARDWARE_SYMBOLS:
         stub_path = MODULE_PATH / "Hardware" / "__init__.pyi"
         with stub_path.open("r") as fobj:
-            for symbol in re.findall("class (\w+)\\W", fobj.read()):
+            for symbol in re.findall(r"class (\w+)\\W", fobj.read()):
                 HARDWARE_SYMBOLS.add(symbol)
     return _addSymbolImport(stub_data, HARDWARE_SYMBOLS, "HardwareMonitor.Hardware")
 
 
 # ------------------------------------------------------------------------------
-def repairStub(stub_path: Path):
+def repairEnumClasses(stub_data: str) -> str:
+    pattern = re.compile(r"^class (\w+):\n((?:    #?\w+ = -?\d+\n)+)\n", re.MULTILINE)
+    def replace_enum(match):
+        class_name = match.group(1)
+        body = re.sub(r"    #(\w+) = (-?\d+)", r"    _\1 = \2", match.group(2))
+        return f"class {class_name}(int):\n{body}\n"
+    return pattern.sub(replace_enum, stub_data)
+
+
+# ------------------------------------------------------------------------------
+def addSubmoduleImports(stub_data: str, subdirs: list[str]) -> str:
+    all_match = re.search(r"^__all__.*$", stub_data, re.MULTILINE)
+    if not all_match:
+        return stub_data
+    names = re.findall(r"'(\w+)'", all_match.group(0))
+    submodule_names = [n for n in names if n in subdirs]
+    if not submodule_names:
+        return stub_data
+    import_line = f"from . import {', '.join(submodule_names)}\n"
+    return import_line + stub_data
+
+
+# ------------------------------------------------------------------------------
+def moveAllStatement(stub_data: str) -> str:
+    all_match = re.search(r"^__all__.*\n", stub_data, re.MULTILINE)
+    if not all_match:
+        return stub_data
+    all_line = all_match.group(0)
+    stub_without_all = stub_data[:all_match.start()] + stub_data[all_match.end():]
+    last_import_end = 0
+    for m in re.finditer(r"^(?:from\s+\S+\s+import\s+.*|import\s+.*)$", stub_without_all, re.MULTILINE):
+        last_import_end = m.end()
+    return stub_without_all[:last_import_end] + "\n" + all_line + stub_without_all[last_import_end:]
+
+
+# ------------------------------------------------------------------------------
+def repairStub(stub_path: Path, subdirs: list[str] = []):
     repair_steps = [
         repairSetAnnotation,
         repairArrayAnnotation,
         repairTypingImport,
+        repairEnumClasses,
         addSystemSymbolImport,
         addHardwareSymbolImport,
     ]
     with stub_path.open("r") as fobj:
         stub_data = fobj.read()
-    # Apply repair functions to the data
     for func in repair_steps:
         stub_data = func(stub_data)
+    if subdirs:
+        stub_data = addSubmoduleImports(stub_data, subdirs)
+    stub_data = moveAllStatement(stub_data)
     with stub_path.open("w") as fobj:
         fobj.write(stub_data)
     print("repaired", repr(str(stub_path.relative_to(BASE_PATH))))
@@ -139,8 +178,9 @@ def repairStub(stub_path: Path):
 
 # ------------------------------------------------------------------------------
 def processNamespaceDir(namespace_dir: Path):
-    has_subdirs = False
     init_py = namespace_dir / "__init__.py"
+    subdirs = []
+    pyi_path = None
     options = {
         "namespace_root":   IMPORT_BASE,
         "submodule_name":   namespace_dir.relative_to(MODULE_PATH).as_posix().replace("/", "."),
@@ -148,15 +188,18 @@ def processNamespaceDir(namespace_dir: Path):
     for path in namespace_dir.iterdir():
         if path.is_dir():
             processNamespaceDir(path)
-            has_subdirs = True
+            subdirs.append(path.name)
         if path.name == "__init__.pyi":
-            with open(NAMESPACE_INIT, "r") as fin:
-                with open(init_py, "w") as fout:
-                    fout.write(fin.read().format(**options))
-            print("updated ", repr(str(init_py.relative_to(BASE_PATH))))
-            repairStub(path)
+            pyi_path = path
 
-    if has_subdirs:
+    if pyi_path is not None:
+        with open(NAMESPACE_INIT, "r") as fin:
+            with open(init_py, "w") as fout:
+                fout.write(fin.read().format(**options))
+        print("updated ", repr(str(init_py.relative_to(BASE_PATH))))
+        repairStub(pyi_path, subdirs)
+
+    if subdirs:
         init_py.touch(exist_ok=True)
         print("touched ", repr(str(init_py.relative_to(BASE_PATH))))
 

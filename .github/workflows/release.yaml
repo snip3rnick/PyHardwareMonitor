@@ -20,7 +20,7 @@ jobs:
       suffix: ${{ steps.release.outputs.suffix }}
       tag_name: ${{ steps.release.outputs.tag_name }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Extract tag and Details
         id: release
@@ -66,7 +66,7 @@ jobs:
             echo "The new version $NEW_VERSION is greater than the latest version $LATEST_VERSION on PyPI."
           fi
 
-  setup_and_build:
+  build_sdist:
     needs: [details, check_pypi]
     runs-on: ubuntu-latest
     steps:
@@ -77,30 +77,60 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install pypa/build
-        run: >-
-          python -m
-          pip install
-          build
-          --user
+      - name: Install build
+        run: python -m pip install build --user
 
-      - name: Build source and wheel distribution
-        run: >-
-          python -m
-          build
-          --sdist
-          --wheel
-          --outdir dist
+      - name: Build sdist
+        run: python -m build --sdist --outdir dist
 
-      - name: Upload artifacts
+      - name: Upload sdist artifact
         uses: actions/upload-artifact@v4
         with:
-          name: dist
-          path: dist/
+          name: dist-sdist
+          path: dist/*.tar.gz
+
+  build_wheels:
+    needs: [details, check_pypi]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - platform: x64
+            plat_tag: win_amd64
+          - platform: x86
+            plat_tag: win32
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install build tools
+        run: python -m pip install build wheel --user
+
+      - name: Stage platform DLLs
+        run: |
+          cp HardwareMonitor/lib/${{ matrix.platform }}/*.dll HardwareMonitor/lib/
+          rm -rf HardwareMonitor/lib/x64 HardwareMonitor/lib/x86 HardwareMonitor/lib/ARM64
+
+      - name: Build wheel
+        run: python -m build --wheel --outdir dist
+
+      - name: Apply platform tag
+        run: python -m wheel tags --platform-tag ${{ matrix.plat_tag }} --remove dist/*.whl
+
+      - name: Upload wheel artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ matrix.platform }}
+          path: dist/*.whl
 
   pypi_publish:
     runs-on: ubuntu-latest
-    needs: [setup_and_build, details]
+    needs: [build_sdist, build_wheels, details]
 
     permissions:
       # IMPORTANT: this permission is mandatory for trusted publishing
@@ -113,15 +143,16 @@ jobs:
       - name: Retrieve release distributions
         uses: actions/download-artifact@v5
         with:
-          name: dist
-          path: dist/
+          pattern: dist-*
+          path: dist
+          merge-multiple: true
 
       - name: Publish release distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
 
   github_release:
     name: Create GitHub Release
-    needs: [setup_and_build, details]
+    needs: [build_sdist, build_wheels, details]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -134,8 +165,9 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v5
         with:
-          name: dist
-          path: dist/
+          pattern: dist-*
+          path: dist
+          merge-multiple: true
 
       - name: Create GitHub Release
         id: create_release

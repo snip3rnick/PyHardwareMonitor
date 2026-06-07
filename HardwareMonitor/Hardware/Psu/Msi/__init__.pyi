@@ -1,7 +1,7 @@
 from HardwareMonitor._util.types import IReadOnlyList
 
 
-class AquaComputerGroup:
+class MsiPsuGroup:
     def __init__(self, settings: ISettings): ...
     def Close(self) -> None: ...
     @property
