@@ -6,7 +6,6 @@ from typing import Dict, Iterable, List, TypeAlias, cast
 from System.Collections.Generic import IDictionary, IList
 
 import HardwareMonitor
-from HardwareMonitor._util.types import Nullable
 from HardwareMonitor.Hardware import Computer, Hardware, HardwareType, IParameter, ISensor, IVisitor, SensorType
 
 logger = logging.getLogger("PyHardwareMonitor")
@@ -47,7 +46,7 @@ SensorTypeUnitFormatter = {
 
 SensorType_t: TypeAlias = int
 
-def SensorValueToString(value: float|Nullable, type: SensorType_t) -> str:
+def SensorValueToString(value: float|None, type: SensorType_t) -> str:
     return SensorTypeUnitFormatter.get(type, "{}").format(isinstance(value, float) and value or 0)
 
 
