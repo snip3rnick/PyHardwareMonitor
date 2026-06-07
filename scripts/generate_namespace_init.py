@@ -113,9 +113,19 @@ def addHardwareSymbolImport(stub_data: str):
     if not HARDWARE_SYMBOLS:
         stub_path = MODULE_PATH / "Hardware" / "__init__.pyi"
         with stub_path.open("r") as fobj:
-            for symbol in re.findall("class (\w+)\\W", fobj.read()):
+            for symbol in re.findall(r"class (\w+)\\W", fobj.read()):
                 HARDWARE_SYMBOLS.add(symbol)
     return _addSymbolImport(stub_data, HARDWARE_SYMBOLS, "HardwareMonitor.Hardware")
+
+
+# ------------------------------------------------------------------------------
+def repairEnumClasses(stub_data: str) -> str:
+    pattern = re.compile(r"^class (\w+):\n((?:    #?\w+ = -?\d+\n)+)\n", re.MULTILINE)
+    def replace_enum(match):
+        class_name = match.group(1)
+        body = re.sub(r"    #(\w+) = (-?\d+)", r"    _\1 = \2", match.group(2))
+        return f"class {class_name}(int):\n{body}\n"
+    return pattern.sub(replace_enum, stub_data)
 
 
 # ------------------------------------------------------------------------------
@@ -150,6 +160,7 @@ def repairStub(stub_path: Path, subdirs: list[str] = []):
         repairSetAnnotation,
         repairArrayAnnotation,
         repairTypingImport,
+        repairEnumClasses,
         addSystemSymbolImport,
         addHardwareSymbolImport,
     ]

@@ -1,7 +1,7 @@
 
-import clr  # noqa: F401
 from pathlib import Path
 
+import clr  # noqa: F401
 
 BASE_PATH   = Path(__file__).parent.absolute()
 MODULE_PATH = BASE_PATH / ".." / "HardwareMonitor"
