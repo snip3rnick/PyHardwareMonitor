@@ -1,4 +1,3 @@
-from HardwareMonitor.Hardware import Hardware, ISettings, IVisitor
 from HardwareMonitor._util.types import Byte, IReadOnlyList, Nullable, Single, TimeSpan
 
 

@@ -1,6 +1,8 @@
+from . import Cpu, Gpu, Motherboard, PowerMonitor, Psu, Storage
 from HardwareMonitor._util.types import AsyncCallback, Byte, DateTime, IAsyncResult, IDictionary, IReadOnlyList, IntPtr, Nullable, Object, Single, TimeSpan, UInt16, UInt32, UInt64
-__all__ = ['Cpu','Gpu','Motherboard','PowerMonitor','Psu','Storage']
 from typing import Iterable, List, Set, overload
+__all__ = ['Cpu','Gpu','Motherboard','PowerMonitor','Psu','Storage']
+
 
 
 class BaseBoardInformation(InformationBase):
@@ -25,7 +27,7 @@ class BiosInformation(InformationBase):
     def Version(self) -> str: ...
 
 
-class CacheAssociativity:
+class CacheAssociativity(int):
     Other = 1
     Unknown = 2
     DirectMapped = 3
@@ -42,7 +44,7 @@ class CacheAssociativity:
     _20Way = 14
 
 
-class CacheDesignation:
+class CacheDesignation(int):
     Other = 0
     L1 = 1
     L2 = 2
@@ -121,13 +123,13 @@ class Computer:
     def Traverse(self, visitor: IVisitor) -> None: ...
 
 
-class ControlMode:
+class ControlMode(int):
     Undefined = 0
     Software = 1
     Default = 2
 
 
-class CoreType:
+class CoreType(int):
     Unknown = 0
     Efficient = 32
     Performance = 64
@@ -183,7 +185,7 @@ class HardwareEventHandler:
     def Invoke(self, hardware: IHardware) -> None: ...
 
 
-class HardwareType:
+class HardwareType(int):
     Motherboard = 0
     SuperIO = 1
     Cpu = 2
@@ -406,7 +408,7 @@ class MemoryDevice(InformationBase):
     def Type(self) -> MemoryType: ...
 
 
-class MemoryType:
+class MemoryType(int):
     Other = 1
     Unknown = 2
     DRAM = 3
@@ -451,8 +453,8 @@ class ParameterDescription:
     def Name(self) -> str: ...
 
 
-class ProcessorCharacteristics:
-    #None = 0
+class ProcessorCharacteristics(int):
+    _None = 0
     _64BitCapable = 1
     MultiCore = 2
     HardwareThread = 4
@@ -462,7 +464,7 @@ class ProcessorCharacteristics:
     _128BitCapable = 64
 
 
-class ProcessorFamily:
+class ProcessorFamily(int):
     Other = 1
     Intel8086 = 3
     Intel80286 = 4
@@ -717,13 +719,13 @@ class ProcessorInformation(InformationBase):
     def Version(self) -> str: ...
 
 
-class ProcessorSocket:
+class ProcessorSocket(int):
     Other = 1
     Unknown = 2
     DaughterBoard = 3
     ZifSocket = 4
     PiggyBack = 5
-    #None = 6
+    _None = 6
     LifSocket = 7
     Zif423 = 13
     A = 14
@@ -775,7 +777,7 @@ class ProcessorSocket:
     Lga4189 = 60
 
 
-class ProcessorType:
+class ProcessorType(int):
     Other = 1
     Unknown = 2
     CentralProcessor = 3
@@ -791,7 +793,7 @@ class SensorEventHandler:
     def Invoke(self, sensor: ISensor) -> None: ...
 
 
-class SensorType:
+class SensorType(int):
     Voltage = 0
     Current = 1
     Power = 2
@@ -883,15 +885,15 @@ class SystemEnclosure(InformationBase):
     def SecurityStatus(self, value: SystemEnclosureSecurityStatus) -> None: ...
 
 
-class SystemEnclosureSecurityStatus:
+class SystemEnclosureSecurityStatus(int):
     Other = 1
     Unknown = 2
-    #None = 3
+    _None = 3
     ExternalInterfaceLockedOut = 4
     ExternalInterfaceEnabled = 5
 
 
-class SystemEnclosureState:
+class SystemEnclosureState(int):
     Other = 1
     Unknown = 2
     Safe = 3
@@ -900,7 +902,7 @@ class SystemEnclosureState:
     NonRecoverable = 6
 
 
-class SystemEnclosureType:
+class SystemEnclosureType(int):
     Other = 1
     Unknown = 2
     Desktop = 3

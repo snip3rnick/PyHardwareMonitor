@@ -1,4 +1,6 @@
+from . import Corsair, Msi
 __all__ = ['Corsair','Msi']
+
 
 
 class ProtocolError:

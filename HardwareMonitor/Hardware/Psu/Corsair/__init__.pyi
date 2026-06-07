@@ -1,4 +1,3 @@
-from HardwareMonitor.Hardware import ISettings
 from HardwareMonitor._util.types import IReadOnlyList
 
 

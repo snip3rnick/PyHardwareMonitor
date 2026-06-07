@@ -1,4 +1,3 @@
-from HardwareMonitor.Hardware import Hardware, ISettings, SensorType
 from HardwareMonitor._util.types import AsyncCallback, Byte, IAsyncResult, IntPtr, Object, Single, UInt16
 from typing import Iterable, Set
 

@@ -16,7 +16,7 @@ class MsiDevice:
     def SupportsHWMonitorIndex13and14(self, firmwareVersion: UInt32) -> bool: ...
 
 
-class MsiDeviceType:
+class MsiDeviceType(int):
     S280 = 0
     S360 = 1
     S360MEG = 2

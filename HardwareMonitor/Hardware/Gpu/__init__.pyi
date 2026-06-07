@@ -1,4 +1,3 @@
-from HardwareMonitor.Hardware import Hardware
 
 
 class GenericGpu(Hardware):

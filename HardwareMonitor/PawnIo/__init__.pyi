@@ -1,4 +1,3 @@
-from HardwareMonitor.Hardware import GroupAffinity
 from HardwareMonitor._util.types import Byte, Int64, UInt32, UInt64
 from typing import Set, Tuple, overload
 
@@ -79,7 +78,7 @@ class MMIOMapping:
     pass
 
 
-class MMIOState:
+class MMIOState(int):
     MMIO_Disabled = 0
     MMIO_Enabled2E = 1
     MMIO_Enabled4E = 2

@@ -1,4 +1,3 @@
-from HardwareMonitor.Hardware import Hardware, ISettings
 from HardwareMonitor._util.types import Nullable
 from typing import List
 

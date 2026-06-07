@@ -1,10 +1,13 @@
 from __future__ import annotations
+
 import logging
-from typing import Dict, Iterable, List
+from typing import Dict, Iterable, List, TypeAlias, cast
+
+from System.Collections.Generic import IDictionary, IList
 
 import HardwareMonitor
-from HardwareMonitor.Hardware import Computer, IVisitor, IComputer, IHardware, IParameter, ISensor, HardwareType, SensorType
-from System.Collections.Generic import IList, IDictionary
+from HardwareMonitor._util.types import Nullable
+from HardwareMonitor.Hardware import Computer, Hardware, HardwareType, IParameter, ISensor, IVisitor, SensorType
 
 logger = logging.getLogger("PyHardwareMonitor")
 
@@ -42,8 +45,10 @@ SensorTypeUnitFormatter = {
     SensorType.Energy: "{:.0f} mWh",
 }
 
-def SensorValueToString(value: float, type: SensorType) -> str:
-    return SensorTypeUnitFormatter.get(type, "{}").format(value or 0)
+SensorType_t: TypeAlias = int
+
+def SensorValueToString(value: float|Nullable, type: SensorType_t) -> str:
+    return SensorTypeUnitFormatter.get(type, "{}").format(isinstance(value, float) and value or 0)
 
 
 def GroupSensorsByType(sensors: Iterable[ISensor]) -> List[List[ISensor]]:
@@ -77,7 +82,7 @@ def IsInstanceOfInterface(obj, interface):
 
 # ------------------------------------------------------------------------------
 _UPDATE_WARNING_CACHE = set()
-def UpdateHardwareSafe(hardware: IHardware):
+def UpdateHardwareSafe(hardware: Hardware):
     try:
         hardware.Update()
     except:
@@ -93,26 +98,28 @@ class UpdateVisitor(IVisitor):
         super().__init__()
         self.time_window = time_window
 
-    def VisitComputer(self, computer: IComputer):
-        computer.Traverse(self);
+    def VisitComputer(self, computer: Computer):
+        computer.Traverse(self)
 
-    def VisitHardware(self, hardware: IHardware):
+    def VisitHardware(self, hardware: Hardware):
         UpdateHardwareSafe(hardware)
         for subHardware in hardware.SubHardware:
-            UpdateHardwareSafe(subHardware)
+            UpdateHardwareSafe(cast(Hardware, subHardware))
 
     def VisitParameter(self, parameter: IParameter):
         pass
 
     def VisitSensor(self, sensor: ISensor):
-        sensor.ValuesTimeWindow = self.time_window
+        sensor.ValuesTimeWindow = self.time_window  # type: ignore
 
 
 # ------------------------------------------------------------------------------
 class PyComputer(Computer):
     def __init__(self, time_window=1.0, **settings):
+        def attr_filter(attr):
+            return attr.startswith("Is") and attr.endswith("Enabled")
+
         super().__init__()
-        attr_filter = lambda attr: attr.startswith("Is") and attr.endswith("Enabled")
         for attr in filter(attr_filter, dir(self)):
             key = attr[2:-7].lower()
             setattr(self, attr, bool(settings.get(key, settings.get("all", False))))

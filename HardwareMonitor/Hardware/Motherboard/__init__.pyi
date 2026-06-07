@@ -1,9 +1,8 @@
-from HardwareMonitor.Hardware import IHardware, ISensor, ISettings, IVisitor, SensorEventHandler
 from HardwareMonitor._util.types import IDictionary
 from typing import Set
 
 
-class Manufacturer:
+class Manufacturer(int):
     Abit = 0
     Acer = 1
     Alienware = 2
@@ -47,7 +46,7 @@ class Manufacturer:
     Unknown = 40
 
 
-class Model:
+class Model(int):
     _880GMH_USB3 = 0
     A320M_HDV = 1
     AB350_Pro4 = 2

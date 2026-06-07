@@ -2,7 +2,7 @@ from HardwareMonitor._util.types import DateTime, UInt16, UInt32
 from typing import List, Set, overload
 
 
-class AVG:
+class AVG(int):
     AVG_22MS = 0
     AVG_44MS = 1
     AVG_89MS = 2
@@ -12,7 +12,7 @@ class AVG:
     AVG_1417MS = 6
 
 
-class CurrentScale:
+class CurrentScale(int):
     CurrentScale5A = 0
     CurrentScale10A = 1
     CurrentScale15A = 2
@@ -91,13 +91,13 @@ class DeviceData:
     def Timestamp(self, value: DateTime) -> None: ...
 
 
-class DISPLAY_INVERSION:
+class DISPLAY_INVERSION(int):
     DISPLAY_INVERSION_OFF = 0
     DISPLAY_INVERSION_ON = 1
     DISPLAY_INVERSION_NUM = 2
 
 
-class DisplayRotation:
+class DisplayRotation(int):
     DisplayRotation0 = 0
     DisplayRotation180 = 1
 
@@ -106,19 +106,19 @@ class FanConfigStruct:
     pass
 
 
-class FanMode:
+class FanMode(int):
     FanModeCurve = 0
     FanModeFixed = 1
 
 
-class HpwrCapability:
+class HpwrCapability(int):
     PSU_CAP_600W = 0
     PSU_CAP_450W = 1
     PSU_CAP_300W = 2
     PSU_CAP_150W = 3
 
 
-class NVM_CMD:
+class NVM_CMD(int):
     NVM_CMD_NONE = 0
     NVM_CMD_LOAD = 1
     NVM_CMD_STORE = 2
@@ -129,7 +129,7 @@ class NVM_CMD:
     NVM_CMD_STORE_CAL_FACTORY = 7
 
 
-class PowerScale:
+class PowerScale(int):
     PowerScaleAuto = 0
     PowerScale300W = 1
     PowerScale600W = 2
@@ -139,7 +139,7 @@ class PowerSensor:
     pass
 
 
-class Screen:
+class Screen(int):
     ScreenMain = 0
     ScreenSimple = 1
     ScreenCurrent = 2
@@ -147,7 +147,7 @@ class Screen:
     ScreenStatus = 4
 
 
-class SCREEN_CMD:
+class SCREEN_CMD(int):
     SCREEN_GOTO_MAIN = 224
     SCREEN_GOTO_SIMPLE = 225
     SCREEN_GOTO_CURRENT = 226
@@ -162,7 +162,7 @@ class SensorStruct:
     pass
 
 
-class SensorTs:
+class SensorTs(int):
     SENSOR_TS_IN = 0
     SENSOR_TS_OUT = 1
     SENSOR_TS3 = 2
@@ -185,7 +185,7 @@ class StructureConversion:
     def ConvertConfigV3ToV2(configV3: DeviceConfigStructV3) -> DeviceConfigStructV2: ...
 
 
-class TempSource:
+class TempSource(int):
     TempSourceTsIn = 0
     TempSourceTsOut = 1
     TempSourceTs1 = 2
@@ -193,25 +193,25 @@ class TempSource:
     TempSourceTmax = 4
 
 
-class Theme:
+class Theme(int):
     ThemeTg1 = 0
     ThemeTg2 = 1
     ThemeTg3 = 2
 
 
-class THEME_BACKGROUND:
+class THEME_BACKGROUND(int):
     ThermalGrizzlyOrange = 1
     ThermalGrizzlyDark = 2
     Disabled = 255
 
 
-class THEME_FAN:
+class THEME_FAN(int):
     ThermalGrizzlyOrange = 100
     ThermalGrizzlyDark = 117
     ThermalGrizzlyBlackWhite = 152
 
 
-class TimeoutMode:
+class TimeoutMode(int):
     TimeoutModeStatic = 0
     TimeoutModeCycle = 1
     TimeoutModeSleep = 2
@@ -225,7 +225,7 @@ class UiConfigStructV2:
     pass
 
 
-class UsbCmd:
+class UsbCmd(int):
     CMD_WELCOME = 0
     CMD_READ_VENDOR_DATA = 1
     CMD_READ_UID = 2
